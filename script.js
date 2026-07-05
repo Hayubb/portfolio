@@ -123,3 +123,38 @@ backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "s
 
 // Footer year
 document.getElementById("year").textContent = new Date().getFullYear();
+
+// Contact form submission (Formspree, AJAX)
+const contactForm = document.getElementById("contactForm");
+const formStatus = document.getElementById("formStatus");
+const formSubmit = document.getElementById("formSubmit");
+
+contactForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  formSubmit.disabled = true;
+  formSubmit.textContent = "Sending...";
+  formStatus.textContent = "";
+  formStatus.className = "form-status";
+
+  try {
+    const response = await fetch(contactForm.action, {
+      method: "POST",
+      body: new FormData(contactForm),
+      headers: { "Accept": "application/json" }
+    });
+
+    if (response.ok) {
+      formStatus.textContent = "Thanks! Your message has been sent — I'll get back to you soon.";
+      formStatus.classList.add("success");
+      contactForm.reset();
+    } else {
+      throw new Error("Submission failed");
+    }
+  } catch (err) {
+    formStatus.textContent = "Something went wrong. Please email me directly at ayubaagiri1@gmail.com.";
+    formStatus.classList.add("error");
+  } finally {
+    formSubmit.disabled = false;
+    formSubmit.textContent = "Send Message";
+  }
+});
